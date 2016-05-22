@@ -12,17 +12,17 @@ public:
 	}
 
 	// Creates and returns a new Entity
-	Entity create() {
+	Entity Create() {
 		_entity.id++;
 		_entities.push_back(_entity);
 		return _entity;
 	}
 
-	void destroy(Entity e) {
+	void Destroy(Entity e) {
 		_entities.remove(e);
 	}
 
-	bool isAlive(Entity e) const {
+	bool IsAlive(Entity e) const {
 		for (auto it = _entities.begin(); it != _entities.end(); it++) {
 			if (*it == e) return true;
 		}

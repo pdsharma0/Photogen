@@ -10,10 +10,10 @@ int main() {
 	EntityManager eManager;
     NameComponentManager ncManager;
 
-    Entity e1 = eManager.create();
-	Entity e2 = eManager.create();
-	Entity e3 = eManager.create();
-	Entity e4 = eManager.create();
+    Entity e1 = eManager.Create();
+	Entity e2 = eManager.Create();
+	Entity e3 = eManager.Create();
+	Entity e4 = eManager.Create();
 
     ncManager.AddEntity(e1, "first");
 	ncManager.AddEntity(e2, "second");
