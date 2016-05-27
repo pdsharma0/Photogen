@@ -16,13 +16,19 @@ class NameComponentManager {
 
 public:
 
-	NameComponentManager() {
+	NameComponentManager(EntityManager& em) {
 		_data.n = MAX_NAME_COMPONENTS;
 		_currIndex = 0;
 
 		// Initialize memory here
 		_data.entity = new Entity[_data.n];
 		_data.name = new CompactString[_data.n];
+
+		// Register RemoveEntity as a callback with EntityManager
+		// RemoveEntity being a class member function is actually
+		// void RemoveEntity(NameComponentManager* this, Entity e)
+		// Hence to std::bind we pass the address of this function, this pointer and a placeholder argument for Entity
+		em.AddDestroyCallback(std::bind(&NameComponentManager::RemoveEntity, this, std::placeholders::_1));
 	}
 
 	// Keep a fixed sized allocation for now
@@ -64,6 +70,8 @@ public:
 	// Remove the supplied entity
 	// ---------------------------
     void RemoveEntity(Entity e) {
+
+		std::cout << "RemoveEntity : " << e.id << std::endl;
 
 		if (_currIndex == 0) {
 			std::cout << "No entities present!\n";

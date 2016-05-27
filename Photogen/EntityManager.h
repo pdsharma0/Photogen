@@ -3,12 +3,15 @@
 #include <list>
 #include <iostream>
 #include "Entity.h"
-#include "NameComponentManager.h"
+#include <functional>
+#include <vector>
+
+typedef std::function<void(Entity)> DestroyCallback;
 
 class EntityManager {
 public:
 
-	EntityManager() : _nameComponentManager(nullptr) {
+	EntityManager() {
 		_entity.id = -1;
 	}
 
@@ -23,9 +26,8 @@ public:
 		_entities.remove(e);
 
 		// Remove entity from all the component managers
-		if (_nameComponentManager) {
-			_nameComponentManager->RemoveEntity(e);
-		}
+		for (auto dc : _destroyCallbacks)
+			dc(e);
 	}
 
 	bool IsAlive(Entity e) const {
@@ -43,8 +45,8 @@ public:
 		std::cout << "}\n";
 	}
 
-	void AddNameComponentManager(NameComponentManager* cm) {
-		_nameComponentManager = cm;
+	void AddDestroyCallback(DestroyCallback dc) {
+		_destroyCallbacks.push_back(dc);
 	}
 
 protected:
@@ -55,8 +57,8 @@ protected:
 	// Keeps track of entity ids
 	Entity _entity;
 
-	// Have a reference to all the component Managers
-	// Reference to NameComponentManager
-	NameComponentManager* _nameComponentManager;
+	// A vector of function objects of type void foo(Entity e)
+	// Component managers will register callbacks for destryoing entities when it's destroyed from EntityManager
+	std::vector<DestroyCallback> _destroyCallbacks;
 
 };

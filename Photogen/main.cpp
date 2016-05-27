@@ -8,9 +8,7 @@ int main() {
 	std::vector<Entity> entities;
 
 	EntityManager eManager;
-    NameComponentManager ncManager;
-
-	eManager.AddNameComponentManager(&ncManager);
+    NameComponentManager ncManager(eManager);
 
     Entity e1 = eManager.Create();
 	Entity e2 = eManager.Create();
