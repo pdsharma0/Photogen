@@ -10,6 +10,8 @@ int main() {
 	EntityManager eManager;
     NameComponentManager ncManager;
 
+	eManager.AddNameComponentManager(&ncManager);
+
     Entity e1 = eManager.Create();
 	Entity e2 = eManager.Create();
 	Entity e3 = eManager.Create();
@@ -28,16 +30,17 @@ int main() {
 
 	ncManager.PrintEntityNames();
 
-	ncManager.RemoveEntity(e1);
+	//ncManager.RemoveEntity(e1);
+	eManager.Destroy(e1);
 	ncManager.PrintEntityNames();
 
-	ncManager.RemoveEntity(e4);
+	eManager.Destroy(e4);
 	ncManager.PrintEntityNames();
 
-	ncManager.RemoveEntity(e3);
+	eManager.Destroy(e3);
 	ncManager.PrintEntityNames();
 
-	ncManager.RemoveEntity(e2);
+	eManager.Destroy(e2);
 	ncManager.PrintEntityNames();
 
 	ncManager.RemoveEntity(e1);

@@ -115,9 +115,9 @@ public:
 	// Print names of all entities registered
 	// ----------------------------------------
 	void PrintEntityNames() {
-		std::cout << "Entities : \n";
+		std::cout << "[NameComponentManager] {Index = {EntityID : EntityName}}  : \n";
 		for (auto it = _map.begin(); it != _map.end(); it++) {
-			std::cout << it->first.id << " : " << _data.name[it->second].str << " (index = " << it->second << ")" << std::endl;
+			std::cout << it->second << " = " << it->first.id << " : " << _data.name[it->second].str << std::endl;
 		}
 	}
 
