@@ -17,12 +17,9 @@ class NameComponentManager {
 public:
 
 	NameComponentManager(EntityManager& em) {
-		_data.n = MAX_NAME_COMPONENTS;
-		_currIndex = 0;
 
-		// Initialize memory here
-		_data.entity = new Entity[_data.n];
-		_data.name = new CompactString[_data.n];
+		AllocateData(MAX_NAME_COMPONENTS);
+		_currIndex = 0;
 
 		// Register RemoveEntity as a callback with EntityManager
 		// RemoveEntity being a class member function is actually
@@ -31,15 +28,8 @@ public:
 		em.AddDestroyCallback(std::bind(&NameComponentManager::RemoveEntity, this, std::placeholders::_1));
 	}
 
-	// Keep a fixed sized allocation for now
-	// It can grow in size once MemAllocater is done
-	NameComponentManager(unsigned int size) {
-		_data.n = size;
-		_currIndex = 0;
-
-		// Initialize memory here
-		_data.entity = new Entity[_data.n];
-		_data.name = new CompactString[_data.n];
+	~NameComponentManager() {
+		FreeData();
 	}
     
 	// ------------------------------
@@ -142,6 +132,17 @@ private:
         return -1;
     }
 
+	void AllocateData(unsigned int size) {
+		_data.n = size;
+		_data.entity = new Entity[size];
+		_data.name = new CompactString[size];
+	}
+
+	void FreeData() {
+		delete[] _data.entity;
+		delete[] _data.name;
+	}
+
 	// ------------------------------------------------------------------
 	// PerfOp : Using std::vector isn't the best way to manage memory
 	// 2 separate vectors will cause fragmented allocation
@@ -154,8 +155,7 @@ private:
 		unsigned int n;
         Entity* entity;
 		CompactString* name;
-    };
-    InstanceData _data;
+    }_data;
 
     // Map to store relationship between entity ID and component's packed index
     // So that we don't have to find the entity every time we lookup it's component
