@@ -6,148 +6,40 @@
 #include "Datatypes.h"
 #include <iostream>
 #include <map>
+#include "EntityManager.h"
 
 #define MAX_NAME_COMPONENTS 1000
 
-// ======================== //
-//	 Manages entity names	//
-// ======================== //
+/* Manages entity names	*/
 class NameComponentManager {
 
 public:
 
-	NameComponentManager(EntityManager& em) {
+	NameComponentManager(EntityManager& em);
 
-		AllocateData(MAX_NAME_COMPONENTS);
-		_currIndex = 0;
-
-		// Register RemoveEntity as a callback with EntityManager
-		// RemoveEntity being a class member function is actually
-		// void RemoveEntity(NameComponentManager* this, Entity e)
-		// Hence to std::bind we pass the address of this function, this pointer and a placeholder argument for Entity
-		em.AddDestroyCallback(std::bind(&NameComponentManager::RemoveEntity, this, std::placeholders::_1));
-	}
-
-	~NameComponentManager() {
-		FreeData();
-	}
+	~NameComponentManager();
     
-	// ------------------------------
-	// Adds an entity and its name 
-	// Returns true if Entity was successfully added
-	// Else returns false
-	// ------------------------------
-    bool AddEntity(Entity e, CompactString sn) {
+	/* Add a entity-name pair; Returns false if no space left */
+	bool AddEntity(Entity e, CompactString sn);
 
-		// Check size
-		if (_currIndex >= _data.n - 1) {
-			std::cout << "Couldn't add Entity : " << e.id << std::endl;
-			return false;
-		}
+	/* Removes an entity */
+	void RemoveEntity(Entity e);
 
-        // index at which the entity will be added to Component
-        int index = _currIndex++;
-        //_map.insert(std::make_pair(e, index));
-		_map[e] = index;
+	/* Returns null if entity doesn't exist */
+	char* GetEntityName(Entity e);
 
-		_data.entity[index] = e;
-		_data.name[index] = sn;
-
-		return true;
-    }
-
-	// ---------------------------
-	// Remove the supplied entity
-	// ---------------------------
-    void RemoveEntity(Entity e) {
-
-		std::cout << "RemoveEntity : " << e.id << std::endl;
-
-		if (_currIndex == 0) {
-			std::cout << "No entities present!\n";
-			return;
-		}
-        
-		// Get the index of current entity to be removed
-		int index = -1;
-		auto it = _map.find(e);
-		if (it == _map.end())
-			return;
-
-		index = it->second;
-
-		// Remove the entity mapping
-		_map.erase(e);
-
-		// Move the last entity to current index
-		if (_currIndex > 1) {
-			Entity lastEntity = _data.entity[_currIndex - 1];
-			_data.entity[index] = lastEntity;
-			_data.name[index] = _data.name[_currIndex - 1];
-
-			// update moved entity's mapping index
-			_map[lastEntity] = index;
-		}
-
-		// Decrease _currIndex
-		_currIndex--;
-    }
-
-	// -------------------------------------------------------------
-	// Get name of a given entity
-	// Returns null string if entity doesn't exist in the manager
-	// -------------------------------------------------------------
-    char* GetEntityName(Entity e) {
-        
-        int entityIdx = Lookup(e);
-        if (entityIdx == -1) {
-            std::cout << "Entity {" << e.id << "} not found!\n";
-            return '\0';
-        }
-        else {
-            return _data.name[entityIdx].str;
-        }
-    }
-
-	// ----------------------------------------
-	// Print names of all entities registered
-	// ----------------------------------------
-	void PrintEntityNames() {
-		std::cout << "[NameComponentManager] {Index = {EntityID : EntityName}}  : \n";
-		for (auto it = _map.begin(); it != _map.end(); it++) {
-			std::cout << it->second << " = " << it->first.id << " : " << _data.name[it->second].str << std::endl;
-		}
-	}
+	/* Print names of all entities registered */
+	void PrintEntityNames();
 
 private:
 
-	// ------------------------------------------------
-	// Given an entity, find its index in the manager
-	// ------------------------------------------------
-    int Lookup(Entity e) {
-        // Find entity index
-        if (_map.find(e) != _map.end()) {
-            return _map[e];
-        }
-        return -1;
-    }
+	/* Given an entity, find its index in the manager */
+	int Lookup(Entity e);
 
-	void AllocateData(unsigned int size) {
-		_data.n = size;
-		_data.entity = new Entity[size];
-		_data.name = new CompactString[size];
-	}
+	void AllocateData(unsigned int size);
 
-	void FreeData() {
-		delete[] _data.entity;
-		delete[] _data.name;
-	}
+	void FreeData();
 
-	// ------------------------------------------------------------------
-	// PerfOp : Using std::vector isn't the best way to manage memory
-	// 2 separate vectors will cause fragmented allocation
-	// Create a MemAllocater which suballocates from a larger pool 
-	// ------------------------------------------------------------------
     struct InstanceData {
 
 		InstanceData() : n(0), entity(nullptr), name(nullptr) {}
@@ -157,8 +49,8 @@ private:
 		CompactString* name;
     }_data;
 
-    // Map to store relationship between entity ID and component's packed index
-    // So that we don't have to find the entity every time we lookup it's component
+    /* Map to store relationship between entity ID and component's packed index
+       So that we don't have to find the entity every time we lookup it's component */
     std::map<Entity, unsigned> _map;
 
 	unsigned int _currIndex;

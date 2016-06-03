@@ -150,7 +150,9 @@
     <ClInclude Include="NameComponentManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="EntityManager.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="NameComponentManager.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

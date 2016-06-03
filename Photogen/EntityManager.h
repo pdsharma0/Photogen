@@ -8,57 +8,39 @@
 
 typedef std::function<void(Entity)> DestroyCallback;
 
+/* Class handles entity creation and destruction */
 class EntityManager {
 public:
 
-	EntityManager() {
-		_entity.id = -1;
-	}
+	EntityManager();
 
-	// Creates and returns a new Entity
-	Entity Create() {
-		_entity.id++;
-		_entities.push_back(_entity);
-		return _entity;
-	}
+	/* Creates a new entity */
+	Entity Create();
 
-	void Destroy(Entity e) {
-		_entities.remove(e);
+	/* Destroys an already created entity */
+	void Destroy(Entity e);
 
-		// Remove entity from all the component managers
-		for (auto dc : _destroyCallbacks)
-			dc(e);
-	}
+	/* Returns true if an entity is alive */
+	bool IsAlive(Entity e) const;
 
-	bool IsAlive(Entity e) const {
-		for (auto it = _entities.begin(); it != _entities.end(); it++) {
-			if (*it == e) return true;
-		}
-        return false;
-	}
+	/* Prins all alive entities */
+	void PrintAliveEntities() const;	
 
-	void PrintAliveEntities() const {
-		std::cout << "{ ";
-		for (auto it = _entities.begin(); it != _entities.end(); it++) {
-			std::cout << (*it).id << ", ";
-		}
-		std::cout << "}\n";
-	}
-
-	void AddDestroyCallback(DestroyCallback dc) {
-		_destroyCallbacks.push_back(dc);
-	}
+	/* Add a callback function to its list of destroy callbacks
+	   which will be called when Destroy is called */
+	void AddDestroyCallback(DestroyCallback dc); // Add to l
 
 protected:
 
-	// A link list of entities such that creation and deletion is not expensive
+	/* A link list of entities */
 	std::list<Entity> _entities;
 
-	// Keeps track of entity ids
+	/* Current/Most recent entity */
 	Entity _entity;
 
-	// A vector of function objects of type void foo(Entity e)
-	// Component managers will register callbacks for destryoing entities when it's destroyed from EntityManager
+	/* A vector of function objects of type void foo(Entity e)
+       Component managers will register callbacks for destryoing 
+	   entities when it's destroyed from EntityManager */
 	std::vector<DestroyCallback> _destroyCallbacks;
 
 };
