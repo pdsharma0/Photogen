@@ -7,8 +7,7 @@
 #include <iostream>
 #include <map>
 #include "EntityManager.h"
-
-#define MAX_NAME_COMPONENTS 1000
+#include "GlobalDefines.h"
 
 /* Manages entity names	*/
 class NameComponentManager {

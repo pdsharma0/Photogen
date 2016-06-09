@@ -27,6 +27,12 @@
     <ClInclude Include="Datatypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DynamicComponentManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalDefines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -36,6 +42,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NameComponentManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DynamicComponentManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
