@@ -144,6 +144,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ComponentHelper.h" />
     <ClInclude Include="Datatypes.h" />
     <ClInclude Include="DynamicComponentManager.h" />
     <ClInclude Include="Entity.h" />

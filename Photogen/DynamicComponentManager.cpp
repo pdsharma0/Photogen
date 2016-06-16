@@ -1,4 +1,6 @@
 #include "DynamicComponentManager.h"
+#include <cassert>
+
 
 DynamicComponentManager::DynamicComponentManager(EntityManager& em) {
 
@@ -18,55 +20,32 @@ DynamicComponentManager::~DynamicComponentManager() {
 
 bool DynamicComponentManager::AddEntity(Entity e, UpdateFunctor uf) {
 
-	// Check size
-	if (_currIndex >= _data.n - 1) {
-		std::cout << "Couldn't add Entity : " << e.id << std::endl;
-		return false;
+	int index = _currIndex;
+	if (AddEntityToComponent(_currIndex, _data.n, e, _map)) {
+		// TODO : Add a function to InstanceData struct 
+		// AddData(InstanceStruct is)
+		// The plan is to make a base ComponentManager class
+		// which has a base InstanceData class and also
+		// a base Instance class
+		// This way we can move the common functionality up the base class
+		_data.entity[index] = e;
+		_data.updateFunctor[index] = uf;
+		return true;
 	}
 
-	// index at which the entity will be added to Component
-	int index = _currIndex++;
-	//_map.insert(std::make_pair(e, index));
-	_map[e] = index;
+	return false;
+}
 
-	_data.entity[index] = e;
-	_data.updateFunctor[index] = uf;
-
-	return true;
+void DynamicComponentManager::MoveData(unsigned src, unsigned dst) {
+	Entity srcEntity = _data.entity[src];
+	_data.entity[dst] = srcEntity;
+	_data.updateFunctor[dst] = _data.updateFunctor[src];
+	// update moved entity's mapping index
+	_map[srcEntity] = dst;
 }
 
 void DynamicComponentManager::RemoveEntity(Entity e) {
-
-	std::cout << "RemoveEntity : " << e.id << std::endl;
-
-	if (_currIndex == 0) {
-		std::cout << "No entities present!\n";
-		return;
-	}
-
-	// Get the index of current entity to be removed
-	int index = -1;
-	auto it = _map.find(e);
-	if (it == _map.end())
-		return;
-
-	index = it->second;
-
-	// Remove the entity mapping
-	_map.erase(e);
-
-	// Move the last entity to current index
-	if (_currIndex > 1) {
-		Entity lastEntity = _data.entity[_currIndex - 1];
-		_data.entity[index] = lastEntity;
-		_data.updateFunctor[index] = _data.updateFunctor[_currIndex - 1];
-
-		// update moved entity's mapping index
-		_map[lastEntity] = index;
-	}
-
-	// Decrease _currIndex
-	_currIndex--;
+	RemoveEntityFromComponent(_currIndex, e, _map, std::bind(&DynamicComponentManager::MoveData, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 void DynamicComponentManager::UpdateEntites() {

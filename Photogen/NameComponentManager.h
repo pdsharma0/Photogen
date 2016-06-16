@@ -39,6 +39,9 @@ private:
 
 	void FreeData();
 
+	/* Moves Entity data from src index to dst index */
+	void MoveData(unsigned src, unsigned dst);
+
     struct InstanceData {
 
 		InstanceData() : n(0), entity(nullptr), name(nullptr) {}

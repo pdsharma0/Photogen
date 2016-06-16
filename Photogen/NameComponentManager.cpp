@@ -1,4 +1,5 @@
 #include "NameComponentManager.h"
+#include "ComponentHelper.h"
 
 NameComponentManager::NameComponentManager(EntityManager& em) {
 
@@ -18,55 +19,26 @@ NameComponentManager::~NameComponentManager() {
 
 bool NameComponentManager::AddEntity(Entity e, CompactString sn) {
 
-	// Check size
-	if (_currIndex >= _data.n - 1) {
-		std::cout << "Couldn't add Entity : " << e.id << std::endl;
-		return false;
+	int index = _currIndex;
+	if (AddEntityToComponent(_currIndex, _data.n, e, _map)) {
+		_data.entity[index] = e;
+		_data.name[index] = sn;
+		return true;
 	}
 
-	// index at which the entity will be added to Component
-	int index = _currIndex++;
-	//_map.insert(std::make_pair(e, index));
-	_map[e] = index;
+	return false;
+}
 
-	_data.entity[index] = e;
-	_data.name[index] = sn;
-
-	return true;
+void NameComponentManager::MoveData(unsigned src, unsigned dst) {
+	Entity srcEntity = _data.entity[src];
+	_data.entity[dst] = srcEntity;
+	_data.name[dst] = _data.name[src];
+	// update moved entity's mapping index
+	_map[srcEntity] = dst;
 }
 
 void NameComponentManager::RemoveEntity(Entity e) {
-
-	std::cout << "RemoveEntity : " << e.id << std::endl;
-
-	if (_currIndex == 0) {
-		std::cout << "No entities present!\n";
-		return;
-	}
-
-	// Get the index of current entity to be removed
-	int index = -1;
-	auto it = _map.find(e);
-	if (it == _map.end())
-		return;
-
-	index = it->second;
-
-	// Remove the entity mapping
-	_map.erase(e);
-
-	// Move the last entity to current index
-	if (_currIndex > 1) {
-		Entity lastEntity = _data.entity[_currIndex - 1];
-		_data.entity[index] = lastEntity;
-		_data.name[index] = _data.name[_currIndex - 1];
-
-		// update moved entity's mapping index
-		_map[lastEntity] = index;
-	}
-
-	// Decrease _currIndex
-	_currIndex--;
+	RemoveEntityFromComponent(_currIndex, e, _map, std::bind(&NameComponentManager::MoveData, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 char* NameComponentManager::GetEntityName(Entity e) {
@@ -92,11 +64,7 @@ void NameComponentManager::PrintEntityNames() {
 // Given an entity, find its index in the manager
 // ------------------------------------------------
 int NameComponentManager::Lookup(Entity e) {
-	// Find entity index
-	if (_map.find(e) != _map.end()) {
-		return _map[e];
-	}
-	return -1;
+	return LookupEntityInComponent(e, _map);
 }
 
 void NameComponentManager::AllocateData(unsigned int size) {

@@ -8,6 +8,7 @@
 #include <map>
 #include "EntityManager.h"
 #include "GlobalDefines.h"
+#include "ComponentHelper.h"
 
 // The idea is to have this manager store a list
 // of function pointers (or objects) for all the 
@@ -45,6 +46,8 @@ private:
 
 	void FreeData();
 
+	void MoveData(unsigned src, unsigned dst);
+
 	struct InstanceData {
 
 		InstanceData() : n(0), entity(nullptr), updateFunctor(nullptr) {}
@@ -56,7 +59,7 @@ private:
 
 	/* Map to store relationship between entity ID and component's packed index
 	So that we don't have to find the entity every time we lookup it's component */
-	std::map<Entity, unsigned> _map;
+	EntityComponentMap _map;
 
 	unsigned int _currIndex;
 };
