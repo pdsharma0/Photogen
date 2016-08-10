@@ -150,12 +150,14 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EntityManager.h" />
     <ClInclude Include="GlobalDefines.h" />
+    <ClInclude Include="MeshComponentManager.h" />
     <ClInclude Include="NameComponentManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DynamicComponentManager.cpp" />
     <ClCompile Include="EntityManager.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MeshComponentManager.cpp" />
     <ClCompile Include="NameComponentManager.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

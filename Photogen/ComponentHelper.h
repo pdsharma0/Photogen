@@ -19,7 +19,7 @@ typedef std::function<void(unsigned, unsigned)> EntityMoveCallback;
 inline bool AddEntityToComponent(unsigned& currIndex, unsigned& size, Entity& e, EntityComponentMap& map) {
 	// Check size
 	if (currIndex >= size - 1) {
-		std::cout << "Couldn't add Entity : " << e.id << std::endl;
+		std::cout << "Size exceeded! Couldn't add Entity : " << e.id << std::endl;
 		return false;
 	}
 
