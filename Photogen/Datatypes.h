@@ -37,26 +37,64 @@ enum MeshTopology {
 };
 
 // ---------------------------
-// A vertex holds 3D position
+// A 2D vector is a vec2
 // ---------------------------
-struct Vertex {
+struct Vector2D {
+	float _x, _y;
+
+	Vector2D(float x = 0, float y = 0) : _x(x), _y(y) {}
+	Vector2D(float x) : _x(x), _y(x) {}
+};
+
+// ---------------------------
+// A 3D vector is a vec3
+// ---------------------------
+struct Vector3D {
 	float _x, _y, _z;
 
-	Vertex(float x = 0, float y = 0, float z = 0) : _x(x), _y(y), _z(z) {}
-	Vertex(float x) : _x(x), _y(x), _z(x) {}
+	Vector3D(float x = 0, float y = 0, float z = 0) : _x(x), _y(y), _z(z) {}
+	Vector3D(float x) : _x(x), _y(x), _z(x) {}
+};
+
+struct Vertex : Vector3D {
+
 };
 
 #define MESH_N_VERTICES 1024
+
+// --------------------------------------------
+// Material contains all the information  
+// about the surface BRDFs of a an entity
+// Can also have different rendering styles
+// applies to it. For example, some materials
+// might need a non PBR rendering method
+// SimpleMaterial just has constants for everyhthing
+// A PBR based material requires diffuse RGB,
+// specular RBG, monochrome normal and monochrome
+// gloss : https://seblagarde.wordpress.com/2011/08/17/feeding-a-physical-based-lighting-mode/
+// For SimpleMaterial we don't need any normal
+// as it'll be inferred from the Mesh
+// [Need different shader for SimpleMaterial]
+// --------------------------------------------
+class Material {
+protected:
+	unsigned _id; 
+	Vector3D _diffuse;
+	Vector3D _specular;
+	float _gloss;
+};
 
 // --------------------------------------------
 // Mesh is a container for a list of vertices
 // --------------------------------------------
 class Mesh {
 protected:
+	unsigned _id; // Multiple entities can refer to a mesh based on its id
 	Vertex* _vertices;
 	MeshTopology _topology;
 	unsigned _maxVertices;
 	unsigned _nVertices;
+	Vector3D* _normals; // Each mesh has a per vertex normal
 
 public:
 	Mesh() : _topology(TRIANGLES), _maxVertices(0), _nVertices(0), _vertices(nullptr) {}

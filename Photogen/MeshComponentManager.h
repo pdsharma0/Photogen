@@ -19,8 +19,8 @@ public:
 	/* Dtor */
 	~MeshComponentManager();
 
-	/* Add a entity-name pair; Returns false if no space left */
-	bool AddEntity(Entity e, Mesh& mesh);
+	/* Add a entity-mesh pair; Returns false if no space left */
+	bool AddEntity(Entity e, Mesh* mesh);
 
 	/* Removes an entity */
 	void RemoveEntity(Entity e);
@@ -37,20 +37,19 @@ private:
 
 	void FreeData();
 
-	/* Moves Entity data from src index to dst index */
-	void MoveData(unsigned src, unsigned dst);
+	/* Moves Entity data from its src index to dst index */
+	void MoveEntityData(Entity e, unsigned src, unsigned dst);
 
 	struct InstanceData {
 
-		InstanceData() : n(0), entity(nullptr), mesh(nullptr) {}
+		InstanceData() : n(0), /*entity(nullptr),*/ mesh(nullptr) {}
 
 		unsigned int n;
-		Entity* entity;
-		Mesh* mesh;
+		//Entity* entity;
+		Mesh** mesh; // This handles duplicates automatically
 	}_data;
 
-	/* Map to store relationship between entity ID and component's packed index
-	So that we don't have to find the entity every time we lookup it's component */
+	/* Mapping from entity's id to its mesh */
 	std::map<Entity, unsigned> _map;
 
 	unsigned int _currIndex;
