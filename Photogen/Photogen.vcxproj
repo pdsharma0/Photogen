@@ -152,7 +152,6 @@
     <ClInclude Include="GlobalDefines.h" />
     <ClInclude Include="MeshComponentManager.h" />
     <ClInclude Include="NameComponentManager.h" />
-    <ClInclude Include="RenderSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DynamicComponentManager.cpp" />
